@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: cc2e56da7e7e66f43a19be0977c6d2cd
+  - enabled: 1
+    path: Assets/Scenes/Nivel1.1.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Nivel1Boss.unity
+    guid: 2978bb387b98fe046a88e7d63bbfc924
+  - enabled: 1
+    path: Assets/Scenes/Historia.unity
+    guid: e902e37c5839dfc4dab2e4c02d32eff6
+  - enabled: 1
+    path: Assets/Scenes/Interlude1.unity
+    guid: 6a607d32e96e296439167c4032538124
+  - enabled: 1
+    path: Assets/Scenes/FinNv1.unity
+    guid: b44b202a84357914bb0bd0a30f93bf05
+  - enabled: 1
+    path: Assets/Scenes/FinJuegoScene.unity
+    guid: 4d2288567995a304a978a466f01f135b
+  - enabled: 1
+    path: Assets/Scenes/Gulag.unity
+    guid: d09b85af9414bbb42b6a6c0dceb013f7
+  - enabled: 1
+    path: Assets/Scenes/IrAlGulagSceme.unity
+    guid: ea790dcc20f86604da08b74e80a45f4f
+  - enabled: 1
+    path: Assets/Scenes/VolverAlNivelScene.unity
+    guid: 719ae4ab0cf400c48b57402f2b507c1c
+  - enabled: 1
+    path: Assets/Scenes/Nivel2.1.unity
+    guid: a38ffe02778857945896178535ff789f
+  m_configObjects: {}

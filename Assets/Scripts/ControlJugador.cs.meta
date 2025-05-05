@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 10b8fc691194cef4a83621143ceef9ce
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - bullertPef: {fileID: 2395696571554214623, guid: c6fffa7985f741b44adfa1a334fa382e, type: 3}
+  - canvas: {instanceID: 0}
+  - hud: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
