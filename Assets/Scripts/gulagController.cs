@@ -4,82 +4,55 @@ using UnityEngine.SceneManagement;
 
 public class gulagController : MonoBehaviour
 {
-    public GameObject enemigoGulag; // El enemigo en el Gulag
-    public GameObject jugador; // El jugador que entra en el Gulag
-    private ControlJugador controlJugador; // Referencia al script de control del jugador
-    private bool jugadorGanoGulag = false;
+    public GameObject enemigoGulag;
+    private ControlJugador jugador;
 
     void Start()
     {
-        // Buscar el controlador del jugador en la escena
-        // Verificamos que tengamos una referencia al jugador
-        if (jugador == null)
-        {
-            jugador = GameObject.FindGameObjectWithTag("Player");
-        }
+        jugador = FindObjectOfType<ControlJugador>();
 
+        // Asegurar que el jugador tenga 1 vida en el Gulag
         if (jugador != null)
         {
-            controlJugador = jugador.GetComponent<ControlJugador>();
-            // Asegurarse de que el jugador comience con 1 vida en el Gulag
-            if (controlJugador != null)
-            {
-                controlJugador.numVidas = 1f;
-                if (controlJugador.hud != null)
-                {
-                    controlJugador.hud.setVidasTxt(controlJugador.numVidas);
-                }
-            }
+            jugador.numVidas = 1f;
+            jugador.hud.setVidasTxt(jugador.numVidas);
         }
     }
 
     void Update()
     {
-        // Verificamos que tengamos referencias válidas
-        if (controlJugador == null || jugadorGanoGulag) return;
-
-        if (controlJugador.numVidas <= 0)
+        if (enemigoGulag == null) // Si el enemigo fue derrotado
         {
-            // Si el jugador muere en el Gulag, perderá el juego
-            PerderGulag();
-        }
-        else if (enemigoGulag == null)
-        {
-            // Si el enemigo es derrotado (null), el jugador ha ganado
             GanarGulag();
+        }
+        else if (jugador != null && jugador.numVidas <= 0) // Si el jugador muere
+        {
+            PerderGulag();
         }
     }
 
     private void GanarGulag()
     {
-        jugadorGanoGulag = true;
-
-        // Informar al controlador del jugador que ganó
-        if (controlJugador != null)
+        if (jugador != null)
         {
-            controlJugador.GanarGulag();
+            jugador.GanarGulag();
         }
         else
         {
-            // Si no hay referencia al controlador, configurar para volver al nivel
-            PlayerPrefs.SetInt("VueltaDeGulag", 1);
-            PlayerPrefs.Save();
-
-            // Cargar la escena con el mensaje de victoria
+            // Fallback por si no encuentra el jugador
             SceneManager.LoadScene("VolverAlNivelScene");
         }
     }
 
     private void PerderGulag()
     {
-        // El jugador ha perdido, se termina el juego
-        if (controlJugador != null)
+        if (jugador != null)
         {
-            controlJugador.PerderGulag();
+            jugador.PerderGulag();
         }
         else
         {
-            // Si no hay referencia al controlador, cargamos la escena de fin directamente
+            // Fallback por si no encuentra el jugador
             SceneManager.LoadScene("FinJuegoScene");
         }
     }

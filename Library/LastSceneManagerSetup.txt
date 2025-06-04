@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Nivel1Boss.unity
+- path: Assets/Scenes/LogScene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,9 +12,10 @@ public class ControlJugador : MonoBehaviour
     public float numVidas = 3f; 
     public int tiempoNivel;
 
+
     // Variables para las llaves
     public int llavesRecolectadas = 0;
-    public bool tieneLlave2 = false;
+    public int tieneLlave2 = 0;
 
     public Canvas canvas;
     public controlHUD hud;
@@ -33,16 +34,28 @@ public class ControlJugador : MonoBehaviour
     // Variables para el Gulag
     private bool fueAlGulag = false;
     private string escenaGulag = "Gulag";
-    public string escenaNivel;
 
-    // Guardar el estado de las variables
-    private float vidasGuardadas;
-    private int tiempoGuardado;
-    private bool fueAlGulagGuardado;
+    public AudioClip dispararFX;
+
+    private AudioSource audioSource;
+
+    public PlayerStats playerStats;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     void Start()
-    {
-        escenaNivel = SceneManager.GetActiveScene().name; // Guardamos el nivel actual
+    { 
+
+        playerStats = GetComponent<PlayerStats>();
+        if (playerStats == null)
+        {
+            Debug.LogError("PlayerStats no encontrado en el jugador.");
+        }
+
+
         hud = canvas.GetComponent<controlHUD>();
         tiempoInicio = Time.time;
         vulnerable = true;
@@ -51,24 +64,17 @@ public class ControlJugador : MonoBehaviour
         animacion = GetComponent<Animator>();
         hud.setVidasTxt(numVidas); // Actualizamos el HUD con las vidas iniciales
 
-        // Recuperar el estado guardado
-        if (PlayerPrefs.HasKey("VidasGuardadas"))
+
+        // Solo cargamos PlayerPrefs si no hemos establecido ya el valor
+        if (!fueAlGulag)
         {
-            vidasGuardadas = PlayerPrefs.GetFloat("VidasGuardadas");
-            tiempoGuardado = PlayerPrefs.GetInt("TiempoGuardado");
-            fueAlGulagGuardado = PlayerPrefs.GetInt("FueAlGulagGuardado") == 1;
-        }
-        else
-        {
-            vidasGuardadas = numVidas;
-            tiempoGuardado = tiempoNivel;
-            fueAlGulagGuardado = false;
+            fueAlGulag = PlayerPrefs.GetInt("FueAlGulagGuardado", 0) == 1;
         }
     }
 
     private void FixedUpdate()
     {
-        if (mostrandoAnimacionMuerte) return; // No mover durante animaciÛn de muerte
+        if (mostrandoAnimacionMuerte) return; // No mover durante animaci√≥n de muerte
 
         float entradaX = Input.GetAxis("Horizontal");
         fisica.velocity = new Vector2(entradaX * velocidad, fisica.velocity.y);
@@ -76,8 +82,8 @@ public class ControlJugador : MonoBehaviour
 
     private void Update()
     {
-        if (mostrandoAnimacionMuerte) return; // No procesar inputs durante animaciÛn de muerte
-
+        if (mostrandoAnimacionMuerte) return; // No procesar inputs durante animaci√≥n de muerte
+        //Salto
         if (Input.GetKeyDown(KeyCode.UpArrow) && TocandoSuelo())
         {
             fisica.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
@@ -116,6 +122,7 @@ public class ControlJugador : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && puedeDisparar && !mostrandoAnimacionMuerte)
         {
+            audioSource.PlayOneShot(dispararFX);
             puedeDisparar = false;
             ultimaDireccionDisparo = mirandoDerecha ? Vector3.right : Vector3.left;
             animacion.Play("jugadorDisparando");
@@ -126,7 +133,8 @@ public class ControlJugador : MonoBehaviour
             Invoke(nameof(HabilitarDisparo), 1f);
         }
     }
-
+   
+  
     private void HabilitarDisparo()
     {
         puedeDisparar = true;
@@ -148,6 +156,7 @@ public class ControlJugador : MonoBehaviour
         estaDisparando = false;
     }
 
+    // Con este metodo se contorla que el jugador no pueda saltar cuando est√° en el aire
     private bool TocandoSuelo()
     {
         RaycastHit2D toca = Physics2D.Raycast(transform.position + new Vector3(0, -2f, 0), Vector2.down, 0);
@@ -156,7 +165,7 @@ public class ControlJugador : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("llave1"))
+        if (other.CompareTag("llave1NV1"))
         {
             llavesRecolectadas++;
             Destroy(other.gameObject);
@@ -166,40 +175,68 @@ public class ControlJugador : MonoBehaviour
                 SceneManager.LoadScene("Interlude1");
             }
         }
-        else if (other.CompareTag("llave2"))
+        else if (other.CompareTag("llave1NV2"))
         {
-            tieneLlave2 = true;
             llavesRecolectadas++;
             Destroy(other.gameObject);
-            SceneManager.LoadScene("Interlude1");
+
+            if (llavesRecolectadas == 5)
+            {
+                SceneManager.LoadScene("Interlude2");
+            }
+        }
+        else if (other.CompareTag("llave2NV1"))
+        {
+            tieneLlave2++;
+            Destroy(other.gameObject);
+            if (tieneLlave2 == 1) {
+                SceneManager.LoadScene("InterludeNv2");
+            }
+
+        } else if (other.CompareTag("llave2NV2")) {
+            tieneLlave2++;
+            Destroy(other.gameObject);
+            if (tieneLlave2 == 1)
+            {
+                SceneManager.LoadScene("VictoriaScene");
+                GanarPartida();
+            }
+
+        }
+        if (other.CompareTag("pinchos"))
+        {
+            QuitarVida(1);
         }
     }
 
-    public void QuitarVida(float daÒo)
+    public void QuitarVida(float da√±o)
     {
+
         if (vulnerable && !mostrandoAnimacionMuerte)
         {
             vulnerable = false;
-            numVidas -= daÒo;
+            numVidas -= da√±o;
             hud.setVidasTxt(numVidas);
 
             if (numVidas <= 0)
             {
                 if (!fueAlGulag)
                 {
-                    // Primera muerte - ir al Gulag con EXACTAMENTE 1 vida
-                    numVidas = 1f; // Fijamos a 1 vida aquÌ mismo
+                    // Primera muerte: Ir al Gulag y guardar el flag
+                    fueAlGulag = true;
+                    PlayerPrefs.SetInt("FueAlGulagGuardado", 1);
+                    PlayerPrefs.Save();
                     StartCoroutine(MostrarAnimacionMuerteYGulag());
                 }
                 else
                 {
-                    // Muerte definitiva en el Gulag
-                    PerderGulag();  // Fin del juego si pierde el Gulag
+                    // Segunda muerte: Fin del juego
+                    StartCoroutine(MostrarAnimacionMuerteYFinJuego());
                 }
             }
             else
             {
-                // DaÒo normal (todavÌa tiene vidas)
+                // Da√±o normal (todav√≠a tiene vidas)
                 Invoke("HacerVulnerable", 1f);
                 sprite.color = Color.red;
             }
@@ -212,12 +249,7 @@ public class ControlJugador : MonoBehaviour
         mostrandoAnimacionMuerte = true;
         animacion.Play("jugadorMuerte");
 
-        yield return new WaitForSeconds(1f); // DuraciÛn de la animaciÛn
-
-        // Guardar el nivel actual para poder volver despuÈs
-        PlayerPrefs.SetString("UltimoNivel", escenaNivel);
-        PlayerPrefs.SetInt("FueAlGulag", 1);
-        PlayerPrefs.Save();
+        yield return new WaitForSeconds(1f); // Duraci√≥n de la animaci√≥n
 
         SceneManager.LoadScene("IrAlGulagSceme"); // Cargar la escena previa al Gulag
     }
@@ -226,9 +258,9 @@ public class ControlJugador : MonoBehaviour
     {
         mostrandoAnimacionMuerte = true;
         animacion.Play("jugadorMuerte");
+        PlayerPrefs.DeleteKey("FueAlGulagGuardado"); // Limpiar el flag al perder
 
-        yield return new WaitForSeconds(1f); // DuraciÛn de la animaciÛn
-
+        yield return new WaitForSeconds(1f); // Duraci√≥n de la animaci√≥n
         FinJuego();
     }
 
@@ -240,25 +272,27 @@ public class ControlJugador : MonoBehaviour
 
     public void GanarGulag()
     {
-        // Esta funciÛn se llama desde gulagController cuando el jugador gana
-
-        // Configurar que el jugador debe volver al nivel con 1 vida
-        PlayerPrefs.SetInt("VueltaDeGulag", 1);
-        PlayerPrefs.Save();
-
         // Cargar la escena intermedia con el mensaje de victoria
         SceneManager.LoadScene("VolverAlNivelScene");
     }
 
     public void PerderGulag()
     {
-        // Si pierde el Gulag, termina el juego
         FinJuego();
     }
-
+    private void GanarPartida()// Este metodo hay que ir mejorandolo cuando hagamos el nivel 2 y va con la logica de las llaves que ya mejoraremos mas adelante
+    {
+        playerStats.PartidaGanada();
+        SceneManager.LoadScene("VictoriaScene");
+    }
     public void FinJuego()
     {
+        playerStats.PartidaPerdida();
         // Cargar la escena de fin de juego
         SceneManager.LoadScene("FinJuegoScene");
+    }
+
+    public void RegistrarEnemigoEliminado() { 
+        playerStats.EnemigoEliminado();
     }
 }

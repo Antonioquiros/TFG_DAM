@@ -11,6 +11,9 @@ public class controlHUD : MonoBehaviour
 
     public void setVidasTxt(float vidas) {
         vidasTxt.text = "Vidas: " + vidas;
+        if (vidas < 0) {
+            vidasTxt.text = "Vidas: " + 0;
+        }
     }
 
     public void setTiempoTxt(int tiempo)

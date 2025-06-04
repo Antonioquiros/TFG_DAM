@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class llaveScript : MonoBehaviour
 {
+    public AudioClip recolectarFX;
     void Start()
     {
         // Asegurarse de que el collider está configurado como trigger
@@ -11,7 +12,6 @@ public class llaveScript : MonoBehaviour
         if (collider != null && !collider.isTrigger)
         {
             collider.isTrigger = true;
-            Debug.Log("Se cambió automáticamente el collider a trigger en " + gameObject.name);
         }
     }
 
@@ -20,6 +20,7 @@ public class llaveScript : MonoBehaviour
         // Verificar si el objeto que entra en contacto es el jugador
         if (other.CompareTag("Player"))
         {
+            other.GetComponent<AudioSource>().PlayOneShot(recolectarFX);
             Debug.Log("Llave recogida por " + other.name);
 
             // Destruir la llave para simular la recolección

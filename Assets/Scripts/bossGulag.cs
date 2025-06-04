@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class bossGulag : MonoBehaviour
@@ -7,7 +7,7 @@ public class bossGulag : MonoBehaviour
     public float rangoDeteccion = 8f;
     public float rangoAtaque = 1.5f;
     public float vida = 5f;
-    public float daño = 1f;
+    public float daÃ±o = 1f;
 
     public Transform puntoAtaque;
     public float radioAtaque = 0.5f;
@@ -20,15 +20,31 @@ public class bossGulag : MonoBehaviour
     private bool muerto = false;
     private bool mirandoDerecha = true;
 
+    public AudioClip disparoFX;
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void Start()
     {
         jugador = GameObject.FindGameObjectWithTag("Player").transform;
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        // Esta parte del codigo es para que ignore los obstaculos y asi se pueda mover bien por el mapa
+        Collider2D bossCollider = GetComponent<Collider2D>();
 
-        // Hacer que mire a la derecha al empezar
-        transform.localScale = new Vector3(1, 1, 1);
-        mirandoDerecha = true;
+        // Ignorar colisiÃ³n con el jugador
+        if (jugador != null)
+        {
+            Collider2D playerCollider = jugador.GetComponent<Collider2D>();
+            if (playerCollider != null && bossCollider != null)
+            {
+                Physics2D.IgnoreCollision(bossCollider, playerCollider, true);
+            }
+        }
     }
 
     void Update()
@@ -37,14 +53,11 @@ public class bossGulag : MonoBehaviour
 
         float distancia = Vector2.Distance(transform.position, jugador.position);
 
-        // Restablecer parámetros por defecto
-        anim.SetBool("andarGulag", false);
-
-        if (distancia <= rangoAtaque && !atacando)  // Si está cerca y no está atacando
+        if (distancia <= rangoAtaque && !atacando)  // Si estÃ¡ cerca y no estÃ¡ atacando
         {
             StartCoroutine(Atacar());
         }
-        else if (distancia <= rangoDeteccion && !atacando)  // Si está dentro del rango de detección y no está atacando
+        else if (distancia <= rangoDeteccion && !atacando)  // Si estÃ¡ dentro del rango de detecciÃ³n y no estÃ¡ atacando
         {
             MoverHaciaJugador();
         }
@@ -60,62 +73,57 @@ public class bossGulag : MonoBehaviour
     {
         float direccion = jugador.position.x - transform.position.x;
         rb.velocity = new Vector2(Mathf.Sign(direccion) * velocidad, rb.velocity.y);
-        anim.SetBool("andarGulag", true);
     }
 
     IEnumerator Atacar()
     {
         atacando = true;
+        audioSource.PlayOneShot(disparoFX);
         rb.velocity = Vector2.zero;
 
         // Elegir ataque aleatorio
         int tipo = Random.Range(0, 2);
 
-        // Activar el trigger específico para cada ataque
+        // Activar el trigger especÃ­fico para cada ataque
         if (tipo == 0)
             anim.SetTrigger("Ataque1");
         else
             anim.SetTrigger("Ataque2");
 
         // Esperar al punto de impacto
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
-        // Lógica de daño
+        // LÃ³gica de daÃ±o
         Collider2D[] golpeados = Physics2D.OverlapCircleAll(puntoAtaque.position, radioAtaque);
         foreach (var col in golpeados)
         {
             if (col.CompareTag("Player"))
             {
-                col.GetComponent<ControlJugador>().QuitarVida(daño);
+                col.GetComponent<ControlJugador>().QuitarVida(daÃ±o);
             }
         }
-
-        // Esperar a que la animación termine completamente
-        // Esto es importante: necesitamos saber cuándo termina la animación
-        yield return new WaitForSeconds(1.0f); // Ajusta este tiempo según la duración de tus animaciones
 
         atacando = false;
     }
 
     void MirarJugador()
     {
-        if (jugador.position.x > transform.position.x && !mirandoDerecha)
+        bool mirarDerecha = jugador.position.x > transform.position.x;
+
+        if (mirarDerecha != mirandoDerecha)
         {
-            transform.localScale = new Vector3(1, 1, 1);
-            mirandoDerecha = true;
-        }
-        else if (jugador.position.x < transform.position.x && mirandoDerecha)
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-            mirandoDerecha = false;
+            mirandoDerecha = mirarDerecha;
+            Vector3 escala = transform.localScale;
+            escala.x *= -1;
+            transform.localScale = escala;
         }
     }
 
-    public void RecibirDaño(float dañoRecibido)
+    public void RecibirDaÃ±o(float daÃ±oRecibido)
     {
         if (muerto) return;
 
-        vida -= dañoRecibido;
+        vida -= daÃ±oRecibido;
 
         if (vida <= 0)
         {
@@ -138,7 +146,7 @@ public class bossGulag : MonoBehaviour
     {
         if (other.CompareTag("bullet"))
         {
-            RecibirDaño(1f);
+            RecibirDaÃ±o(1f);
             Destroy(other.gameObject);
         }
     }

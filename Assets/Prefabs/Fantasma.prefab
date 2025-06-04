@@ -94,8 +94,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4453562630985061726}
   - component: {fileID: 5260336883570704288}
-  - component: {fileID: 4342368261729954142}
   - component: {fileID: 8947613661069498902}
+  - component: {fileID: 8036476500254831227}
   m_Layer: 0
   m_Name: ghost-halo-1
   m_TagString: Untagged
@@ -170,18 +170,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4342368261729954142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3518073024503990956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a3c82773d8dd7846b6b63c3ca52a7c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &8947613661069498902
 Animator:
   serializedVersion: 5
@@ -203,3 +191,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8036476500254831227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3518073024503990956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c9d2796086b35b4c8939cd49516b0b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

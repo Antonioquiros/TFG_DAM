@@ -4,12 +4,18 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - llave1
   - bullet
   - llave2
   - enemigo
   - boss1
   - gulag
+  - boss2
+  - fisico
+  - pinchos
+  - llave1NV1
+  - llave1NV2
+  - llave2NV1
+  - llave2NV2
   layers:
   - Default
   - TransparentFX

@@ -18,11 +18,41 @@ public class Jefe : MonoBehaviour
     private bool atacando = false;
     private bool estaMuerto = false;
 
+    public AudioClip disparoFX;
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         jugador = GameObject.FindGameObjectWithTag("Player").transform;
+
+        Collider2D bossCollider = GetComponent<Collider2D>();
+
+        GameObject[] fisicos = GameObject.FindGameObjectsWithTag("fisico");
+
+        foreach (GameObject obj in fisicos)
+        {
+            Collider2D objCollider = obj.GetComponent<Collider2D>();
+            if (objCollider != null)
+            {
+                Physics2D.IgnoreCollision(bossCollider, objCollider);
+            }
+        }
+        // Ignorar colisión con el jugador
+        if (jugador != null)
+        {
+            Collider2D playerCollider = jugador.GetComponent<Collider2D>();
+            if (playerCollider != null && bossCollider != null)
+            {
+                Physics2D.IgnoreCollision(bossCollider, playerCollider, true);
+            }
+        }
     }
 
     private void Update()
@@ -44,7 +74,6 @@ public class Jefe : MonoBehaviour
         else
         {
             rb.velocity = Vector2.zero;
-            anim.SetBool("Caminar", false);
         }
 
         MirarJugador();
@@ -54,7 +83,6 @@ public class Jefe : MonoBehaviour
     {
         float direccion = jugador.position.x - transform.position.x;
         rb.velocity = new Vector2(Mathf.Sign(direccion) * velocidad, rb.velocity.y);
-        anim.SetBool("Caminando", true);
     }
 
     void MirarJugador()
@@ -74,7 +102,8 @@ public class Jefe : MonoBehaviour
     {
         atacando = true;
         anim.SetTrigger("Ataque");
-        yield return new WaitForSeconds(0.5f); // Tiempo de la animación hasta el golpe
+        yield return new WaitForSeconds(0.5f); // Para que pueda hacer la animación completa y se corrdine el momento en el que da el golpe con el momento en el que se le quita vida al jugador
+        audioSource.PlayOneShot(disparoFX);
 
         Collider2D[] golpeados = Physics2D.OverlapCircleAll(controladorAtaque.position, radioAtaque);
         foreach (var col in golpeados)
@@ -99,16 +128,6 @@ public class Jefe : MonoBehaviour
         {
             StartCoroutine(MorirConAnimacion());
         }
-        else
-        {
-            StartCoroutine(PausaCorta());
-        }
-    }
-
-    IEnumerator PausaCorta()
-    {
-        rb.velocity = Vector2.zero;
-        yield return new WaitForSeconds(0.3f);
     }
 
     IEnumerator MorirConAnimacion()
