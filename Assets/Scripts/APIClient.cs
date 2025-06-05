@@ -15,7 +15,7 @@ public class APIClient : MonoBehaviour
     public UnityEvent<bool> OnStatsUpdated = new UnityEvent<bool>();
     public UnityEvent OnLogoutSuccess = new UnityEvent();
 
-    private string apiUrl = "http://localhost:3000";
+    private string apiUrl = "https://apitfg-production-110c.up.railway.app";
     private int usuarioId; // ID del usuario logueado/registrado
     public Usuario usuarioActual;
 
