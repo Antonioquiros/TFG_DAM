@@ -236,7 +236,6 @@ public class APIClient : MonoBehaviour
         // Notificar que el logout fue exitoso
         OnLogoutSuccess.Invoke();
 
-        Debug.Log("Sesión cerrada localmente");
         // Cargar escena inicial
         SceneManager.LoadScene("InitialScene");
     }

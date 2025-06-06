@@ -70,19 +70,4 @@ public class PlayerStats : MonoBehaviour
         // Finalizar partida
         partidaActiva = false;
     }
-
-    public void SalirSinResultado()
-    {
-        if (!partidaActiva) return;
-
-        // Calcular tiempo jugado
-        int tiempoSegundos = (int)(Time.time - tiempoInicioPartida);
-
-        // Solo actualizar el tiempo jugado y los enemigos eliminados (sin resultados)
-        apiClient.IncrementarTiempoJugado(tiempoSegundos);
-        apiClient.IncrementarEnemigosEliminados();
-
-        // Finalizar partida
-        partidaActiva = false;
-    }
 }

@@ -103,6 +103,7 @@ public class ControlJugador : MonoBehaviour
         animarJugador();
         manejarDisparo();
 
+        // Aqui controlamos que si el tiempo llega a 0, se acaba la partida
         tiempoEmpleado = (int)(Time.time - tiempoInicio);
         hud.setTiempoTxt(tiempoNivel - tiempoEmpleado);
         hud.setLlavesTxt(llavesRecolectadas);

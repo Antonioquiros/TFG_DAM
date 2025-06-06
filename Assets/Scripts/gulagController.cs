@@ -46,7 +46,7 @@ public class gulagController : MonoBehaviour
 
     private void PerderGulag()
     {
-        if (jugador != null)
+        if (jugador != null || jugador.tiempoNivel == 0)
         {
             jugador.PerderGulag();
         }
