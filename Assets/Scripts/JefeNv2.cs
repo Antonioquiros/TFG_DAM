@@ -84,7 +84,7 @@ public class JefeNv2 : MonoBehaviour
         MirarJugador();
     }
 
-    void MoverHaciaJugador()
+    void MoverHaciaJugador()                   // Jefe Nv2
     {
         // Dirección normalizada hacia el jugador
         Vector2 direccion = (jugador.position - transform.position).normalized;

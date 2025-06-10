@@ -79,7 +79,7 @@ public class Jefe : MonoBehaviour
         MirarJugador();
     }
 
-    void MoverHaciaJugador()
+    void MoverHaciaJugador()                       //Jefe Nv1
     {
         float direccion = jugador.position.x - transform.position.x;
         rb.velocity = new Vector2(Mathf.Sign(direccion) * velocidad, rb.velocity.y);

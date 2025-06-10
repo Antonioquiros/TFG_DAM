@@ -6,7 +6,6 @@ public class PlayerStats : MonoBehaviour
     private APIClient apiClient;
     private float tiempoInicioPartida;
     private int enemigosEliminados;
-    private int derrotas;
     private bool partidaActiva = false;
 
     void Start()
@@ -25,15 +24,11 @@ public class PlayerStats : MonoBehaviour
     public void IniciarPartida()
     {
         tiempoInicioPartida = (int)Time.time;
-        enemigosEliminados = 0;
-        derrotas = 0;
         partidaActiva = true;
     }
 
     public void EnemigoEliminado()
     {
-        if (!partidaActiva) return;
-        enemigosEliminados++;
         apiClient.IncrementarEnemigosEliminados();  // Actualizar enemigos eliminados en el servidor
     }
 
@@ -55,10 +50,6 @@ public class PlayerStats : MonoBehaviour
     public void PartidaPerdida()
     {
         if (!partidaActiva) return;
-
-        derrotas = 1;
-
-     
 
         // Calcular tiempo jugado
         int tiempoSegundos = (int)(Time.time - tiempoInicioPartida);

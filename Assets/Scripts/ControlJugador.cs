@@ -76,6 +76,7 @@ public class ControlJugador : MonoBehaviour
     {
         if (mostrandoAnimacionMuerte) return; // No mover durante animación de muerte
 
+        //Correr
         float entradaX = Input.GetAxis("Horizontal");
         fisica.velocity = new Vector2(entradaX * velocidad, fisica.velocity.y);
     }
